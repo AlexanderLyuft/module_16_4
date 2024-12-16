@@ -1,9 +1,9 @@
             # Домашнее задание по теме "Модели данных Pydantic"
 
 
-from fastapi import FastAPI, HTTPException, Path
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, constr, conint
-from typing import List
+from typing import List, Optional
 
 app = FastAPI()
 
@@ -22,7 +22,10 @@ def get_users():
     return users
 
 @app.post("/user/{username}/{age}", response_model=User)
-def create_user(username: constr(min_length=5, max_length=20), age: conint(ge=0)):
+def create_user(
+    username: constr(min_length=5, max_length=20),
+    age: conint(ge=0)
+):
     """Добавляет нового пользователя и возвращает его"""
     new_id = (users[-1].id + 1) if users else 1  # Максимальный ID + 1
     new_user = User(id=new_id, username=username, age=age)
@@ -30,7 +33,11 @@ def create_user(username: constr(min_length=5, max_length=20), age: conint(ge=0)
     return new_user
 
 @app.put("/user/{user_id}/{username}/{age}", response_model=User)
-def update_user(user_id: int, username: constr(min_length=5, max_length=20), age: conint(ge=0)):
+def update_user(
+    user_id: int,
+    username: constr(min_length=5, max_length=20),
+    age: conint(ge=0)
+):
     """Обновляет существующего пользователя и возвращает его"""
     for user in users:
         if user.id == user_id:
@@ -47,9 +54,6 @@ def delete_user(user_id: int):
             users.remove(user)
             return user
     raise HTTPException(status_code=404, detail="User was not found")
-
-
-
 
 
 
